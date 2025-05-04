@@ -16,6 +16,14 @@ export default function Index() {
     toggleHabitCompletion,
   } = useHabits();
   
+  // Create a wrapper function to adapt the parameter types
+  const handleHabitUpdate = (updatedHabit: any) => {
+    // Extract the habit ID from the updated habit object
+    const habitId = updatedHabit.id;
+    // Call toggleHabitCompletion with the ID
+    return toggleHabitCompletion(habitId);
+  };
+  
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -38,7 +46,8 @@ export default function Index() {
                 <AddHabitDialog onAddHabit={addHabit} />
               </div>
               
-              <HabitList habits={habits} onHabitUpdate={toggleHabitCompletion} />
+              {/* Pass the wrapper function to HabitList */}
+              <HabitList habits={habits} onHabitUpdate={handleHabitUpdate} />
               
               <div className="border-t pt-6 mt-8">
                 <h2 className="text-xl font-semibold mb-4">Challenges</h2>
