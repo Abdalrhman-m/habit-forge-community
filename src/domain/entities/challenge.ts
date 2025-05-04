@@ -2,8 +2,6 @@
 /**
  * Challenge entity representing a community challenge
  */
-import { Habit } from "./habit";
-
 export interface Challenge {
   id: string;
   title: string;
