@@ -1,18 +1,19 @@
 
 import { useState } from "react";
-import { Habit } from "@/types/habit";
+import { Habit } from "../../domain/entities/Habit";
 import HabitCard from "./HabitCard";
+import { getTodayString } from "../../presentation/utils/habitUtils";
 
 interface HabitListProps {
   habits: Habit[];
-  onHabitUpdate: (updatedHabit: Habit) => void;
+  onHabitUpdate: (habitId: string, date?: string) => Promise<Habit>;
 }
 
 export default function HabitList({ habits, onHabitUpdate }: HabitListProps) {
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
   
   const filteredHabits = habits.filter(habit => {
-    const today = new Date().toISOString().split("T")[0];
+    const today = getTodayString();
     const todayCompleted = habit.trackingData.some(
       data => data.date === today && data.completed
     );

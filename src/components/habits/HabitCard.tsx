@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Habit } from "@/types/habit";
-import { getLastNDays, toggleHabitCompletion } from "@/utils/habitUtils";
+import { Habit } from "../../domain/entities/Habit";
+import { getLastNDays } from "../../presentation/utils/habitUtils";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -9,7 +9,7 @@ import { useState } from "react";
 
 interface HabitCardProps {
   habit: Habit;
-  onHabitUpdate: (updatedHabit: Habit) => void;
+  onHabitUpdate: (habitId: string, date?: string) => Promise<Habit>;
 }
 
 export default function HabitCard({ habit, onHabitUpdate }: HabitCardProps) {
@@ -18,24 +18,19 @@ export default function HabitCard({ habit, onHabitUpdate }: HabitCardProps) {
   const lastSevenDays = getLastNDays(habit, 7);
   const todayCompleted = lastSevenDays.find(day => day.isToday)?.completed;
   
-  const handleToggleComplete = () => {
+  const handleToggleComplete = async () => {
     setIsUpdating(true);
     
-    // Simulate a small delay to show loading state
-    setTimeout(() => {
-      const updatedHabit = toggleHabitCompletion(habit);
-      onHabitUpdate(updatedHabit);
-      setIsUpdating(false);
-      
+    try {
+      await onHabitUpdate(habit.id);
+    } catch (error) {
       toast({
-        title: updatedHabit.trackingData.find(d => d.date === lastSevenDays.find(day => day.isToday)?.date)?.completed
-          ? `${habit.name} completed!`
-          : `${habit.name} marked incomplete.`,
-        description: updatedHabit.trackingData.find(d => d.date === lastSevenDays.find(day => day.isToday)?.date)?.completed
-          ? `Current streak: ${updatedHabit.currentStreak} days`
-          : "",
+        title: "Error",
+        description: "Failed to update habit status",
       });
-    }, 300);
+    } finally {
+      setIsUpdating(false);
+    }
   };
   
   return (

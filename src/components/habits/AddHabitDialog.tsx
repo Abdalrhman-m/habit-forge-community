@@ -14,12 +14,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Habit, HabitFrequency } from "@/types/habit";
-import { generateId, getTodayString } from "@/utils/habitUtils";
+import { Habit, HabitFrequency } from "../../domain/entities/Habit";
+import { generateId } from "../../presentation/utils/habitUtils";
 import { Plus } from "lucide-react";
 
 interface AddHabitDialogProps {
-  onAddHabit: (habit: Habit) => void;
+  onAddHabit: (habit: Habit) => Promise<Habit>;
 }
 
 const HABIT_ICONS = ["🏃‍♂️", "💧", "📚", "🧘‍♂️", "🥗", "💤", "💪", "🧠", "🎸", "✍️"];
@@ -38,7 +38,7 @@ export default function AddHabitDialog({ onAddHabit }: AddHabitDialogProps) {
   const [icon, setIcon] = useState("🏃‍♂️");
   const [frequency, setFrequency] = useState<HabitFrequency>("daily");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!name.trim()) return;
@@ -55,7 +55,7 @@ export default function AddHabitDialog({ onAddHabit }: AddHabitDialogProps) {
       trackingData: []
     };
     
-    onAddHabit(newHabit);
+    await onAddHabit(newHabit);
     resetForm();
     setOpen(false);
   };
